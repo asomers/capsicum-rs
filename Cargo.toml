@@ -22,6 +22,8 @@ targets = [
 
 [dependencies]
 libc = { version = "0.2.138", features = [ "extra_traits" ] }
+const-cstr = "0.3.0"
+libc = { git = "http://github.com/asomers/libc.git", rev = "30d598fff", features = [ "extra_traits" ] }
 
 [build-dependencies]
 version_check = "0.9.4"

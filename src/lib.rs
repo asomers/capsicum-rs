@@ -46,13 +46,18 @@
 ///
 /// assert!(ok_file.read_to_string(&mut s).is_ok());
 /// ```
+//#[macro_use]
+//use const_cstr;
+
 mod common;
+mod casper;
 mod fcntl;
 mod ioctl;
 mod process;
 mod right;
 pub mod util;
 
+pub use casper::CapChannel;
 pub use fcntl::{Fcntl, FcntlRights, FcntlsBuilder};
 pub use ioctl::{IoctlRights, IoctlsBuilder};
 pub use process::{enter, get_mode, sandboxed};
