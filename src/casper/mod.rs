@@ -1,10 +1,15 @@
-use std::ptr;
+use std::{
+    ffi::CStr,
+    ptr
+};
 
-use crate::common::{CapErr, CapErrType, CapResult, CapRights};
+use const_cstr::const_cstr;
+
+use crate::common::{CapErr, CapErrType, CapResult};
 
 mod cap_sysctl;
 
-pub use cap_sysctl::CapSysctl;
+pub use cap_sysctl::{CapSysctl, CapSysctlLimit, CapSysctlFlags};
 
 /// A channel to communicate with Casper or Casper services
 // Must not be Clone or Copy!  The inner pointer is an opaque structure created
@@ -34,7 +39,7 @@ impl Casper {
         }
     }
 
-    fn service_open(&self, name: &cstr) -> CapResult<CapChannel> {
+    fn service_open(&self, name: &CStr) -> CapResult<CapChannel> {
         let chan = unsafe { libc::cap_service_open(self.0.0, name.as_ptr()) };
         if chan == ptr::null_mut() {
             Err(CapErr::from(CapErrType::Invalid))
@@ -43,14 +48,15 @@ impl Casper {
         }
     }
 
+    /// Get a handle to the Casper sysctl service.
     pub fn sysctl(&self) -> CapResult<CapSysctl> {
-        let chan = self.service_open(const_cstr!("system.sysctl"))?;
+        let chan = self.service_open(const_cstr!("system.sysctl").as_cstr())?;
         Ok(CapSysctl::new(chan))
     }
 
     pub fn try_clone(&self) -> CapResult<Self> {
         // Safe as long as self.0 is a valid channel, which we ensure
-        let chan2 = unsafe{ libc::cap_clone(self.0) };
+        let chan2 = unsafe{ libc::cap_clone(self.0.0) };
         if chan2 == ptr::null_mut() {
             Err(CapErr::from(CapErrType::Invalid))
         } else {
