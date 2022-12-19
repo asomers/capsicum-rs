@@ -57,7 +57,7 @@ mod process;
 mod right;
 pub mod util;
 
-pub use casper::{Casper, CapSysctl, CapSysctlLimit, CapSysctlFlags};
+pub use casper::Casper;
 pub use fcntl::{Fcntl, FcntlRights, FcntlsBuilder};
 pub use ioctl::{IoctlRights, IoctlsBuilder};
 pub use process::{enter, get_mode, sandboxed};

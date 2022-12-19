@@ -162,30 +162,6 @@ mod base {
     }
 }
 
-mod casper {
-    use std::ffi::CStr;
-
-    use capsicum::{Casper, CapSysctlLimit, CapSysctlFlags};
-    use const_cstr::{ConstCStr, const_cstr};
-
-    #[test]
-    fn sysctl() {
-        const name: ConstCStr = const_cstr!("kern.ostype");
-
-        use Casper;
-        let casper = Casper::new().unwrap();
-        capsicum::enter().unwrap();
-        let sysctl = casper.sysctl().unwrap();
-        drop(casper);
-        sysctl.limit()
-            .unwrap()
-            .add_name(name.as_cstr(), CapSysctlFlags::READ)
-            .unwrap()
-            .limit()
-            .unwrap();
-    }
-}
-
 mod util {
     use std::fs;
 

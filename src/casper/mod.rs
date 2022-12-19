@@ -1,26 +1,19 @@
 use std::{
     ffi::CStr,
+    io,
     ptr
 };
-
-use const_cstr::const_cstr;
-
-use crate::common::{CapErr, CapErrType, CapResult};
-
-mod cap_sysctl;
-
-pub use cap_sysctl::{CapSysctl, CapSysctlLimit, CapSysctlFlags};
 
 /// A channel to communicate with Casper or Casper services
 // Must not be Clone or Copy!  The inner pointer is an opaque structure created
 // by cap_init, and must be freed with cap_close.
 #[derive(Debug)]
-pub(self) struct CapChannel(*mut libc::cap_channel_t);
+pub struct CapChannel(*mut casper_sys::cap_channel_t);
 
 impl Drop for CapChannel {
     fn drop(&mut self) {
         // always safe
-        unsafe{ libc::cap_close(self.0) }
+        unsafe{ casper_sys::cap_close(self.0) }
     }
 }
 
@@ -29,53 +22,35 @@ impl Drop for CapChannel {
 pub struct Casper(CapChannel);
 
 impl Casper {
-    pub fn new() -> CapResult<Self> {
+    pub fn new() -> io::Result<Self> {
         // cap_init is always safe;
-        let chan = unsafe { libc::cap_init() };
+        let chan = unsafe { casper_sys::cap_init() };
         if chan == ptr::null_mut() {
-            Err(CapErr::from(CapErrType::Invalid))
+            Err(io::Error::last_os_error())
         } else {
             Ok(Casper(CapChannel(chan)))
         }
     }
 
-    fn service_open(&self, name: &CStr) -> CapResult<CapChannel> {
-        let chan = unsafe { libc::cap_service_open(self.0.0, name.as_ptr()) };
+    /// Open a connection to the named Casper service.
+    pub fn service_open(&self, name: &CStr) -> io::Result<CapChannel> {
+        let chan = unsafe {
+            casper_sys::cap_service_open(self.0.0, name.as_ptr()) 
+        };
         if chan == ptr::null_mut() {
-            Err(CapErr::from(CapErrType::Invalid))
+            Err(io::Error::last_os_error())
         } else {
             Ok(CapChannel(chan))
         }
     }
 
-    /// Get a handle to the Casper sysctl service.
-    pub fn sysctl(&self) -> CapResult<CapSysctl> {
-        let chan = self.service_open(const_cstr!("system.sysctl").as_cstr())?;
-        Ok(CapSysctl::new(chan))
-    }
-
-    pub fn try_clone(&self) -> CapResult<Self> {
+    pub fn try_clone(&self) -> io::Result<Self> {
         // Safe as long as self.0 is a valid channel, which we ensure
-        let chan2 = unsafe{ libc::cap_clone(self.0.0) };
+        let chan2 = unsafe{ casper_sys::cap_clone(self.0.0) };
         if chan2 == ptr::null_mut() {
-            Err(CapErr::from(CapErrType::Invalid))
+            Err(io::Error::last_os_error())
         } else {
             Ok(Casper(CapChannel(chan2)))
         }
     }
 }
-
-//#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-//pub enum CapService {
-    ///// [`cap_sysctl`](https://www.freebsd.org/cgi/man.cgi?query=cap_sysctl)
-    //Sysctl,
-    //// Other services are as yet unimplemented
-    //// Dns
-    //// Grp
-    //// Net
-    //// Pwd
-    //// Syslog
-//}
-
-//impl CapService {
-    //fn new(self) -> 
