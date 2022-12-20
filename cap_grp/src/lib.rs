@@ -17,6 +17,7 @@ impl CapGroup {
     /// use capsicum::casper::Casper;
     /// use cap_grp::CasperExt as _;
     /// let casper = Casper::new().expect("casper failed");
+    /// capsicum::enter();
     /// let mut cap_grp = casper.group().expect("cap_grp failed");
     /// let wheel = cap_grp.getgrgid(0).expect("cap_getgrgid_r failed")
     ///     .expect("group wheel not found");
