@@ -1,0 +1,2 @@
+[workspace]
+members = ["cap_grp", "cap_grp-sys", "capsicum", "casper-sys"]
