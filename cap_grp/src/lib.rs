@@ -1,35 +1,20 @@
 use std::{ffi::CStr, fmt, io, mem, ptr};
 
-use capsicum::{CapChannel, Casper};
-use const_cstr::{ConstCStr, const_cstr};
+use capsicum::casper;
+use const_cstr::{const_cstr};
 use libc::gid_t;
 
-const SERVICE_NAME: ConstCStr = const_cstr!("system.grp");
+casper::service!(
+    /// A connection to the Casper `cap_group` helper.
+    pub CapGroup, const_cstr!("system.grp"), group
+);
 
-// let casper = Casper::new().unwrap();
-// let cap_grp = casper.group().unwrap();
-//
-// let casper = Casper::new().unwrap();
-// let cap_grp = CapGroup::new(&casper).unwrap();
-pub trait CasperExt {
-    fn group(&self) -> io::Result<CapGroup>;
-}
-
-impl CasperExt for Casper {
-    fn group(&self) -> io::Result<CapGroup> {
-        self.service_open(SERVICE_NAME.as_cstr())
-            .map(CapGroup)
-    }
-}
-
-/// A connection to the Casper `cap_group` helper.
-pub struct CapGroup(CapChannel);
 
 impl CapGroup {
     // Not robust; just for demonstration purposes
     /// # Example
     /// ```
-    /// use capsicum::Casper;
+    /// use capsicum::casper::Casper;
     /// use cap_grp::CasperExt as _;
     /// let casper = Casper::new().expect("casper failed");
     /// let mut cap_grp = casper.group().expect("cap_grp failed");

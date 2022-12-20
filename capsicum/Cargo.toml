@@ -23,6 +23,7 @@ targets = [
 [dependencies]
 libc = { version = "0.2.138", features = [ "extra_traits" ] }
 casper-sys = { path = "../casper-sys" }
+const-cstr = "0.3.0"
 
 [build-dependencies]
 version_check = "0.9.4"

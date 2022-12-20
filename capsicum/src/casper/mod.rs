@@ -1,3 +1,4 @@
+// TODO: add a casper feature, so libcasper isn't unconditionally linked.
 use std::{
     ffi::CStr,
     io,
@@ -41,7 +42,9 @@ impl Casper {
         }
     }
 
-    /// Open a connection to the named Casper service.
+    /// Open a connection to the named Casper service.  Should not be used
+    /// directly except by [`service!`].
+    #[doc(hidden)]
     pub fn service_open(&self, name: &CStr) -> io::Result<CapChannel> {
         let chan = unsafe {
             casper_sys::cap_service_open(self.0.0, name.as_ptr()) 
@@ -63,3 +66,41 @@ impl Casper {
         }
     }
 }
+
+mod macros {
+    /// Declare a Casper service.
+    ///
+    /// # Arguments
+    /// * `vis` - Visibility of the generated structure.
+    /// * `_struct` - The name of the struct that accesses the service.
+    /// * `cname` - The name that the service registers with Casper.
+    /// * `meth` - The name of the accessor that will be added to `Casper`.
+    ///
+    /// # Examples
+    /// ```
+    /// use capsicum::casper;
+    /// use const_cstr::const_cstr;
+    ///
+    /// casper::service!(CapGroup, const_cstr!("system.grp"), group);
+    /// ```
+    #[macro_export]
+    macro_rules! service {
+        ($(#[$attr:meta])* $vis:vis $_struct:ident, $cname:expr, $meth:ident) => {
+            $(#[$attr])*
+            $vis struct $_struct(::capsicum::casper::CapChannel);
+            $vis trait CasperExt {
+                fn $meth(&self) -> ::std::io::Result<$_struct>;
+            }
+            impl CasperExt for ::capsicum::casper::Casper {
+                fn $meth(&self) -> ::std::io::Result<$_struct> {
+                    self.service_open($cname.as_cstr())
+                        .map($_struct)
+                }
+            }
+        }
+    }
+    pub use service;
+
+}
+
+pub use macros::service;
