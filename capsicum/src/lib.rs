@@ -49,6 +49,7 @@
 
 mod common;
 #[cfg(feature = "casper")]
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 pub mod casper;
 mod fcntl;
 mod ioctl;
