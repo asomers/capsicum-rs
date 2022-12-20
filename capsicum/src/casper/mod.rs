@@ -10,6 +10,15 @@ use std::{
 #[derive(Debug)]
 pub struct CapChannel(*mut casper_sys::cap_channel_t);
 
+impl CapChannel {
+    pub fn as_mut_ptr(&mut self) -> *mut casper_sys::cap_channel_t {
+        self.0
+    }
+    pub fn as_ptr(&self) -> *const casper_sys::cap_channel_t {
+        self.0
+    }
+}
+
 impl Drop for CapChannel {
     fn drop(&mut self) {
         // always safe
