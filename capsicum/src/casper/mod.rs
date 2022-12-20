@@ -1,7 +1,6 @@
 use std::{
     ffi::CStr,
     io,
-    ptr
 };
 
 /// A channel to communicate with Casper or Casper services
@@ -34,7 +33,7 @@ impl Casper {
     pub fn new() -> io::Result<Self> {
         // cap_init is always safe;
         let chan = unsafe { casper_sys::cap_init() };
-        if chan == ptr::null_mut() {
+        if chan.is_null() {
             Err(io::Error::last_os_error())
         } else {
             Ok(Casper(CapChannel(chan)))
@@ -48,7 +47,7 @@ impl Casper {
         let chan = unsafe {
             casper_sys::cap_service_open(self.0.0, name.as_ptr()) 
         };
-        if chan == ptr::null_mut() {
+        if chan.is_null() {
             Err(io::Error::last_os_error())
         } else {
             Ok(CapChannel(chan))
@@ -58,7 +57,7 @@ impl Casper {
     pub fn try_clone(&self) -> io::Result<Self> {
         // Safe as long as self.0 is a valid channel, which we ensure
         let chan2 = unsafe{ casper_sys::cap_clone(self.0.0) };
-        if chan2 == ptr::null_mut() {
+        if chan2.is_null() {
             Err(io::Error::last_os_error())
         } else {
             Ok(Casper(CapChannel(chan2)))
