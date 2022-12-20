@@ -20,9 +20,12 @@ targets = [
   "x86_64-unknown-freebsd",
 ]
 
+[features]
+casper = [ "casper-sys" ]
+
 [dependencies]
 libc = { version = "0.2.138", features = [ "extra_traits" ] }
-casper-sys = { path = "../casper-sys" }
+casper-sys = { path = "../casper-sys", optional = true}
 const-cstr = "0.3.0"
 
 [build-dependencies]

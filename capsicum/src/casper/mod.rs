@@ -1,4 +1,3 @@
-// TODO: add a casper feature, so libcasper isn't unconditionally linked.
 use std::{
     ffi::CStr,
     io,

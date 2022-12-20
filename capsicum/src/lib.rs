@@ -46,10 +46,9 @@
 ///
 /// assert!(ok_file.read_to_string(&mut s).is_ok());
 /// ```
-//#[macro_use]
-//use const_cstr;
 
 mod common;
+#[cfg(feature = "casper")]
 pub mod casper;
 mod fcntl;
 mod ioctl;

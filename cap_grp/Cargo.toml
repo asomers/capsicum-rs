@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-capsicum = { path = "../capsicum" }
+capsicum = { path = "../capsicum", features = [ "casper" ] }
 cap_grp-sys = { path = "../cap_grp-sys" }
 const-cstr = "0.3.0"
 libc = { version = "0.2.138", features = [ "extra_traits" ] }
