@@ -9,4 +9,5 @@ CRATEDIR=`dirname $0`/..
 bindgen --generate functions,types \
 	--allowlist-function 'cap_.*' \
 	--allowlist-function 'service_register' \
+	--blocklist-type 'nvlist' \
 	${CRATEDIR}/bindgen/wrapper.h > ${CRATEDIR}/src/ffi.rs

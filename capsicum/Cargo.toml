@@ -24,6 +24,10 @@ targets = [
 [features]
 casper = [ "casper-sys" ]
 
+[[example]]
+name = "getuid"
+required-features = ["casper"]
+
 [dependencies]
 libc = { version = "0.2.138", features = [ "extra_traits" ] }
 casper-sys = { path = "../casper-sys", optional = true}
@@ -33,5 +37,8 @@ const-cstr = "0.3.0"
 version_check = "0.9.4"
 
 [dev-dependencies]
+ctor = "0.1.26"
 nix = { version = "0.26.1", default_features = false, features = [ "ioctl", "process" ] }
+libnv = { version = "0.3.0", default_features = false, features = [ "libnv" ] }
+libnv-sys = "0.1.5"
 tempfile = "3.0"

@@ -2,12 +2,6 @@
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct nvlist {
-    _unused: [u8; 0],
-}
-pub type nvlist_t = nvlist;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct cap_channel {
     _unused: [u8; 0],
 }

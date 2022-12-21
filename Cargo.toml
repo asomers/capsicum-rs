@@ -1,2 +1,8 @@
 [workspace]
 members = ["cap_grp", "cap_grp-sys", "capsicum", "casper-sys"]
+
+[patch.crates-io]
+#libnv = { git = "https://github.com/Inner-Heaven/libnv-rs.git" , rev = "ffaa33f" }
+libnv = { path = "../libnv-rs" }
+libnv-sys = { path = "../libnv-rs/libnv-sys" }
+#libnv-sys = { git = "https://github.com/Inner-Heaven/libnv-rs.git" , rev = "ffaa33f" }

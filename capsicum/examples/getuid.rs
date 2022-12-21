@@ -3,7 +3,9 @@
 use std::{io, ptr};
 
 use libc::uid_t;
-use casper_sys::nvlist_t;
+use libnv::libnv::{NvList, NvFlag};
+//use casper_sys::nvlist_t;
+use libnv_sys::nvlist as nvlist_t;
 use capsicum::casper::{self, Casper};
 use const_cstr::{ConstCStr, const_cstr};
 use ctor::ctor;
@@ -37,8 +39,9 @@ casper::service!(
 
 impl CapUid {
     pub fn uid(&mut self) -> io::Result<uid_t> {
+        let nvl = NvList::new(NvFlag::None).unwrap();
         let r = unsafe {
-            casper_sys::cap_xfer_nvlist(self.0.as_ptr(), ptr::null_mut())
+            casper_sys::cap_xfer_nvlist(self.0.as_ptr(), nvl.into())
         };
         if r.is_null() {
             Err(io::Error::last_os_error())
