@@ -5,11 +5,8 @@
 # libnv.so.0.  See also build.rs.
 
 CRATEDIR=`dirname $0`/..
-cat > ${CRATEDIR}/src/lib.rs << HERE
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
-HERE
 
 bindgen --generate functions,types \
 	--allowlist-function 'cap_.*' \
-	${CRATEDIR}/bindgen/wrapper.h >> ${CRATEDIR}/src/lib.rs
+	--allowlist-function 'service_register' \
+	${CRATEDIR}/bindgen/wrapper.h > ${CRATEDIR}/src/ffi.rs
